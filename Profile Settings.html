@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - Sugarcane Smart Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1b5e20;
+            --accent: #4CAF50;
+            --bg: #f4f7f1;
+            --white: #ffffff;
+            --gray: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { display: flex; background: var(--bg); min-height: 100vh; }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 260px;
+            background: var(--primary);
+            color: white;
+            padding: 25px;
+            position: fixed;
+            height: 100%;
+        }
+
+        .sidebar h2 { font-size: 20px; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
+        
+        .nav-links a {
+            display: block;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover { background: var(--accent); color: white; }
+        .nav-links a.active { background: var(--white); color: var(--primary); font-weight: 600; }
+
+        /* Main Content Area */
+        .main-content { margin-left: 260px; flex: 1; padding: 40px; }
+
+        .header { margin-bottom: 30px; }
+        .header h1 { color: var(--primary); font-size: 28px; }
+
+        /* Settings Grid */
+        .settings-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            max-width: 1000px;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            height: fit-content;
+        }
+
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            background: #ddd;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            border: 4px solid var(--accent);
+        }
+
+        /* Form Styling */
+        .form-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 14px; font-weight: 600; color: var(--gray); margin-bottom: 8px; }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1); }
+
+        .btn-save {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-save:hover { background: var(--accent); }
+
+        .project-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>AgriSmart IoT</h2>
+        <div class="nav-links">
+            <a href="dashboard.html">Live Dashboard</a>
+            <a href="HistoricalData.html">Historical Data</a>
+            <a href="DeviceHealth.html">Device Health</a>
+            <a href="#" class="active">Profile Settings</a>
+            <a href="index.html" style="margin-top: 40px; color: #ff8a80;">Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Settings & Preferences</h1>
+            <div class="project-badge">Project: Sugarcane Smart Quality Monitor</div>
+        </div>
+
+        <div class="settings-container">
+            <div class="profile-card">
+                <div class="profile-pic">👨‍🌾</div>
+                <h3 id="display-name">Farmer Admin</h3>
+                <p style="color: var(--gray); font-size: 13px;">Field Location: Plot A-12</p>
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+                <div style="text-align: left; font-size: 12px; color: var(--gray);">
+                    <p><strong>ESP32 ID:</strong> ESP32-SUGAR-001</p>
+                    <p><strong>Last Sync:</strong> 2 mins ago</p>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px;">Account Information</h3>
+                <form id="settingsForm">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="nameInput" value="Farmer Admin">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" value="admin@agrismart.io">
+                    </div>
+                    
+                    <h3 style="margin: 30px 0 20px;">IoT System Preferences</h3>
+                    <div class="form-group">
+                        <label>Field/Plot Location</label>
+                        <input type="text" value="Maharashtra, India">
+                    </div>
+                    <div class="form-group">
+                        <label>Sugarcane Variety</label>
+                        <select>
+                            <option>Co 86032</option>
+                            <option>Co 0238</option>
+                            <option>Co 0118</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brix Alert Threshold (%)</label>
+                        <input type="number" value="18" step="0.5">
+                    </div>
+
+                    <button type="button" class="btn-save" onclick="saveSettings()">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function saveSettings() {
+            const newName = document.getElementById('nameInput').value;
+            document.getElementById('display-name').innerText = newName;
+            
+            // Simulation of software saving data to Cloud/Database
+            alert("Settings updated successfully! Changes synced with Cloud Database.");
+            console.log("Saving user configuration to IoT backend...");
+        }
+    </script>
+</body>
+</html>

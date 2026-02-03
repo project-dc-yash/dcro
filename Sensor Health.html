@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware Status - Sugarcane IoT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1b5e20;
+            --accent: #4CAF50;
+            --bg: #0f172a; /* Dark theme for technical hardware feel */
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --online: #4ade80;
+            --offline: #f87171;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { display: flex; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #000;
+            padding: 25px;
+            position: fixed;
+            height: 100%;
+        }
+
+        .sidebar h2 { font-size: 20px; color: var(--accent); margin-bottom: 30px; }
+        .nav-links a {
+            display: block;
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .nav-links a.active { background: var(--primary); color: white; }
+
+        /* Main Content */
+        .main-content { margin-left: 260px; flex: 1; padding: 40px; }
+
+        .header { margin-bottom: 30px; border-bottom: 1px solid #334155; padding-bottom: 20px; }
+
+        /* Hardware Grid */
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .sensor-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #334155;
+            transition: 0.3s;
+        }
+
+        .sensor-card:hover { border-color: var(--accent); }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.online { background: rgba(74, 222, 128, 0.1); color: var(--online); }
+        .badge.offline { background: rgba(248, 113, 113, 0.1); color: var(--offline); }
+
+        .technical-info { font-size: 13px; color: #94a3b8; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .info-row b { color: var(--text); }
+
+        .progress-mini {
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar { height: 100%; background: var(--accent); width: 100%; }
+
+        .voltage-tag { color: #facc15; font-weight: bold; font-size: 11px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Hardware Lab</h2>
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="DeviceHealth.html" class="active">Sensor Status</a>
+            <a href="HistoricalData.html">Logs</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Hardware Peripheral Health</h1>
+            <p style="color: #94a3b8;">Real-time diagnostics for ESP32 & I2C Bus sensors</p>
+        </div>
+
+        <div class="sensor-grid">
+            <div class="sensor-card">
+                <div class="status-header">
+                    <h3>AS7263 NIR</h3>
+                    <span class="badge online">Active</span>
+                </div>
+                <div class="technical-info">
+                    <div class="info-row"><span>I2C Address:</span> <b>0x49</b></div>
+                    <div class="info-row"><span>Wavelength:</span> <b>610nm-860nm</b></div>
+                    <div class="info-row"><span>Status:</span> <b>Calibrated</b></div>
+                    <div class="voltage-tag">⚡ 3.3V VCC</div>
+                </div>
+                <div class="progress-mini"><div class="progress-bar" style="width: 100%;"></div></div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="status-header">
+                    <h3>BME280 Env.</h3>
+                    <span class="badge online">Active</span>
+                </div>
+                <div class="technical-info">
+                    <div class="info-row"><span>I2C Address:</span> <b>0x76/0x77</b></div>
+                    <div class="info-row"><span>Interface:</span> <b>SDA/SCL</b></div>
+                    <div class="info-row"><span>Data Stream:</span> <b>Healthy</b></div>
+                    <div class="voltage-tag">⚡ 3.3V VCC</div>
+                </div>
+                <div class="progress-mini"><div class="progress-bar" style="width: 100%;"></div></div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="status-header">
+                    <h3>Soil Moisture</h3>
+                    <span class="badge online">Active</span>
+                </div>
+                <div class="technical-info">
+                    <div class="info-row"><span>Pin Mode:</span> <b>Analog ADC</b></div>
+                    <div class="info-row"><span>Pin Assigned:</span> <b>GPIO 34</b></div>
+                    <div class="info-row"><span>Sensor Type:</span> <b>Capacitive</b></div>
+                    <div class="voltage-tag">⚡ 5.0V VCC</div>
+                </div>
+                <div class="progress-mini"><div class="progress-bar" style="width: 100%;"></div></div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="status-header">
+                    <h3>ESP32 Controller</h3>
+                    <span class="badge online">Active</span>
+                </div>
+                <div class="technical-info">
+                    <div class="info-row"><span>Core Temp:</span> <b>38.5°C</b></div>
+                    <div class="info-row"><span>Memory Heap:</span> <b>124 KB Free</b></div>
+                    <div class="info-row"><span>Flash Mode:</span> <b>DIO</b></div>
+                    <div class="voltage-tag">📶 WiFi: -58dBm</div>
+                </div>
+                <div class="progress-mini"><div class="progress-bar" style="width: 92%; background: #60a5fa;"></div></div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #1e293b; border-radius: 10px; border: 1px dashed #475569;">
+            <h4 style="margin-bottom: 10px; color: var(--accent);">Hardware Connection Logic</h4>
+            <p style="font-size: 13px; color: #94a3b8;">
+                All sensors are interfaced with the <b>ESP32-WROOM-32</b>. 
+                NIR and BME sensors utilize the <b>I2C protocol (SDA: GPIO 21, SCL: GPIO 22)</b>, 
+                while the soil probe uses the <b>ADC1_CH6 (GPIO 34)</b> for analog readings.
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        // Configuration for Sensor Ranges
+        const sensorConfig = {
+            brix: { min: 14.0, max: 20.0, step: 0.1, id: 'brix-val' },
+            nir: { min: 600, max: 650, step: 1, id: 'nir-val' },
+            moist: { min: 35, max: 55, step: 1, id: 'moist-val' },
+            temp: { min: 28.5, max: 34.0, step: 0.2, id: 'temp-val' }
+        };
+    
+        /**
+         * Function to simulate live IoT data drift
+         */
+        function simulateHardwareData() {
+            for (let key in sensorConfig) {
+                const config = sensorConfig[key];
+                const element = document.getElementById(config.id);
+    
+                if (element) {
+                    // Get current value from the screen
+                    let currentVal = parseFloat(element.innerText);
+                    
+                    // Randomly decide to go UP or DOWN
+                    const direction = Math.random() > 0.5 ? 1 : -1;
+                    let newVal = currentVal + (direction * config.step);
+    
+                    // Keep values within safe hardware limits
+                    if (newVal > config.max) newVal = config.max;
+                    if (newVal < config.min) newVal = config.min;
+    
+                    // Update the UI with the new "Live" data
+                    if (key === 'nir' || key === 'moist') {
+                        element.innerText = Math.round(newVal);
+                    } else {
+                        element.innerText = newVal.toFixed(1);
+                    }
+                    
+                    // Trigger a small visual pulse effect when value changes
+                    element.style.transition = "0.3s";
+                    element.style.color = direction > 0 ? "#4CAF50" : "#f44336";
+                    setTimeout(() => { element.style.color = ""; }, 500);
+                }
+            }
+        }
+    
+        // Run the simulation every 3 seconds (3000ms)
+        setInterval(simulateHardwareData, 3000);
+    </script>
+</body>
+</html>

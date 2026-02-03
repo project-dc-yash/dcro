@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Health - Sugarcane Smart Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1b5e20;
+            --accent: #4CAF50;
+            --bg: #f4f7f1;
+            --white: #ffffff;
+            --safe: #2e7d32;
+            --warning: #ffa000;
+            --danger: #d32f2f;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { display: flex; background: var(--bg); min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--primary);
+            color: white;
+            padding: 25px;
+            position: fixed;
+            height: 100%;
+        }
+
+        .sidebar h2 { font-size: 20px; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
+        
+        .nav-links a {
+            display: block;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover { background: var(--accent); color: white; }
+        .nav-links a.active { background: var(--white); color: var(--primary); font-weight: 600; }
+
+        /* Main Content */
+        .main-content { margin-left: 260px; flex: 1; padding: 30px; }
+
+        .header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Health Cards */
+        .health-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+        .card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        
+        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .online { background-color: var(--safe); box-shadow: 0 0 8px var(--safe); }
+
+        /* Progress Bar for Health */
+        .health-bar-container {
+            background: #eee;
+            border-radius: 10px;
+            height: 12px;
+            width: 100%;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent), var(--safe));
+            width: 98%;
+            transition: 0.5s;
+        }
+
+        /* IoT Specific Info */
+        .iot-specs { margin-top: 15px; font-size: 13px; color: #666; }
+        .spec-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f0f0f0; }
+
+        /* Diagnostic Button */
+        .diag-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .diag-btn:hover { background: var(--accent); }
+
+        .log-area {
+            background: #212121;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            height: 150px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>AgriSmart IoT</h2>
+        <div class="nav-links">
+            <a href="dashboard.html">Live Dashboard</a>
+            <a href="HistoricalData.html">Historical Data</a>
+            <a href="#" class="active">Device Health</a>
+            <a href="index.html">Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Hardware Health Monitor</h1>
+                <p>System: ESP32-WROOM-32 v1.0.4</p>
+            </div>
+            <button class="diag-btn" onclick="runDiagnostics()">Run System Scan</button>
+        </div>
+
+        <div class="health-grid">
+            <div class="card">
+                <div class="status-header">
+                    <h3>IoT Controller (ESP32)</h3>
+                    <span><span class="dot online"></span>Active</span>
+                </div>
+                <div class="health-bar-container"><div class="health-fill" style="width: 95%;"></div></div>
+                <div class="iot-specs">
+                    <div class="spec-item"><span>Internal Temp</span><span>42°C</span></div>
+                    <div class="spec-item"><span>Wi-Fi Signal (RSSI)</span><span id="rssi">-62 dBm</span></div>
+                    <div class="spec-item"><span>Uptime</span><span>14h 22m</span></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="status-header">
+                    <h3>Sensor Integration</h3>
+                    <span>Stable</span>
+                </div>
+                <p style="font-size: 12px; margin-bottom: 10px;">Hardware Connectivity Status</p>
+                <div class="iot-specs">
+                    <div class="spec-item"><span>AS7263 NIR Sensor</span><span style="color: var(--safe);">Connected</span></div>
+                    <div class="spec-item"><span>BME280 Environment</span><span style="color: var(--safe);">Connected</span></div>
+                    <div class="spec-item"><span>Soil Moisture Probe</span><span style="color: var(--safe);">Connected</span></div>
+                    <div class="spec-item"><span>I2C Bus Status</span><span style="color: var(--safe);">OK</span></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="status-header">
+                    <h3>Software Part</h3>
+                    <span>Cloud Syncing</span>
+                </div>
+                <div class="health-bar-container"><div class="health-fill" style="width: 88%;"></div></div>
+                <div class="iot-specs">
+                    <div class="spec-item"><span>Database Latency</span><span>45ms</span></div>
+                    <div class="spec-item"><span>AI Model Version</span><span>v2.1_SugarML</span></div>
+                    <div class="spec-item"><span>JSON Packet Status</span><span>Valid</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="log-area" id="logConsole">
+            [INFO] System Boot Successful...<br>
+            [INFO] Initializing I2C Communication...<br>
+            [INFO] Connected to Firebase Cloud Database...<br>
+            [STATUS] Monitoring Sugarcane Maturity Sensor Points...
+        </div>
+    </div>
+
+    <script>
+        function runDiagnostics() {
+            const log = document.getElementById('logConsole');
+            log.innerHTML += "<br>[SCAN] Starting Hardware Diagnostic scan...";
+            
+            setTimeout(() => {
+                log.innerHTML += "<br>[SCAN] Checking AS7263 Spectrometer calibration... [OK]";
+                log.scrollTop = log.scrollHeight;
+            }, 1000);
+
+            setTimeout(() => {
+                log.innerHTML += "<br>[SCAN] Verifying BME280 humidity registers... [OK]";
+                log.scrollTop = log.scrollHeight;
+            }, 2000);
+
+            setTimeout(() => {
+                log.innerHTML += "<br>[SCAN] **All hardware and software systems healthy.**";
+                log.scrollTop = log.scrollHeight;
+                alert("System Health Scan Complete. No errors found.");
+            }, 3500);
+        }
+
+        // Simulate fluctuating Wi-Fi Signal
+        setInterval(() => {
+            const rssi = Math.floor(Math.random() * ( -60 - (-70) + 1) + (-70));
+            document.getElementById('rssi').innerText = rssi + " dBm";
+        }, 5000);
+    </script>
+</body>
+</html>

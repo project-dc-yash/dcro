@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sugarcane Analytics - Historical Data</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1b5e20;
+            --accent: #4CAF50;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --danger: #d32f2f;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body { display: flex; background: var(--bg); min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--primary);
+            color: white;
+            padding: 25px;
+            position: fixed;
+            height: 100%;
+            z-index: 1000;
+        }
+
+        .sidebar h2 { font-size: 20px; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
+        
+        .nav-links a {
+            display: block;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover { background: var(--accent); color: white; }
+        .nav-links a.active { background: var(--white); color: var(--primary); font-weight: 600; }
+
+        /* Main Content */
+        .main-content { margin-left: 260px; flex: 1; padding: 30px; width: calc(100% - 260px); }
+
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 30px; 
+        }
+
+        /* Chart Section */
+        .chart-container {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            height: 400px;
+        }
+
+        /* Table Section */
+        .table-container {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            text-align: left;
+            background: #f1f5f9;
+            padding: 12px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .good { background: #dcfce7; color: #166534; }
+        .wait { background: #fef9c3; color: #854d0e; }
+
+        .btn-export {
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>AgriSmart IoT</h2>
+        <div class="nav-links">
+            <a href="dashboard.html">Live Dashboard</a>
+            <a href="HistoricalData.html" class="active">Historical Data</a>
+            <a href="Sensor Health.html">Sensor Health</a>
+            <a href="index.html">Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Historical Quality Trends</h1>
+                <p style="color: #666;">Brix Momentum Tracking: Mon - Fri</p>
+            </div>
+            <button class="btn-export">Download CSV Report</button>
+        </div>
+
+        <div class="chart-container">
+            <h3 style="margin-bottom: 15px;">Weekly Brix Volatility</h3>
+            <canvas id="brixChart"></canvas>
+        </div>
+
+        <div class="table-container">
+            <h3>Detailed Sensor Logs</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Brix (%)</th>
+                        <th>NIR (nm)</th>
+                        <th>Soil Moist.</th>
+                        <th>Temp (°C)</th>
+                        <th>AI Result</th>
+                    </tr>
+                </thead>
+                <tbody id="logTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    
+
+    <script>
+        const ctx = document.getElementById('brixChart').getContext('2d');
+        
+        // UP AND DOWN MOMENTUM DATA (Mon to Fri Focused)
+        // Values fluctuate to show real momentum
+        const brixData = [14.2, 16.5, 15.1, 18.2, 16.8, 19.5, 18.9]; 
+        const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Brix Content (%)',
+                    data: brixData,
+                    borderColor: '#1b5e20',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4, // Smooths the up/down waves
+                    pointRadius: 8,
+                    pointHoverRadius: 10,
+                    // COLOR LOGIC: Green for UP, Red for DOWN
+                    pointBackgroundColor: function(context) {
+                        const index = context.dataIndex;
+                        if (index === 0) return '#1b5e20';
+                        const value = context.dataset.data[index];
+                        const prev = context.dataset.data[index - 1];
+                        return value >= prev ? '#4CAF50' : '#d32f2f';
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 12,
+                        max: 22,
+                        title: { display: true, text: 'Sugar Content (Brix %)' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        enabled: true,
+                        callbacks: {
+                            label: (item) => ` Brix: ${item.raw}%`
+                        }
+                    }
+                }
+            }
+        });
+
+        // Historical Table Rows
+        const logs = [
+            { time: "2026-02-03 09:00", brix: "16.8%", nir: "625", moist: "45%", temp: "31.2", res: "Wait" },
+            { time: "2026-02-02 14:30", brix: "18.2%", nir: "610", moist: "40%", temp: "33.5", res: "Ready" },
+            { time: "2026-02-01 10:15", brix: "15.1%", nir: "630", moist: "55%", temp: "28.8", res: "Wait" },
+            { time: "2026-01-31 16:00", brix: "16.5%", nir: "615", moist: "48%", temp: "30.1", res: "Wait" },
+            { time: "2026-01-30 08:45", brix: "14.2%", nir: "642", moist: "52%", temp: "28.4", res: "Wait" }
+        ];
+
+        const table = document.getElementById('logTableBody');
+        logs.forEach(log => {
+            table.innerHTML += `
+                <tr>
+                    <td>${log.time}</td>
+                    <td><strong>${log.brix}</strong></td>
+                    <td>${log.nir} nm</td>
+                    <td>${log.moist}</td>
+                    <td>${log.temp}°C</td>
+                    <td><span class="status-badge ${log.res === 'Ready' ? 'good' : 'wait'}">${log.res}</span></td>
+                </tr>
+            `;
+        });
+    </script>
+</body>
+</html>
